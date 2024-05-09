@@ -48,9 +48,7 @@ project-root/
 │   ├── jscode.js
 │   ├── style.css
 │   └── home.css
-|   ```python
-python3 app.py
-```
+|  
 ├── app.py
 ├── data_fetch.py
 ├── prompt.py
