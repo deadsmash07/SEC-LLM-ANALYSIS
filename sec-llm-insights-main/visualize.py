@@ -199,6 +199,7 @@ def extract_values_for_segments_charts(json_data):
                 ...
         }
     """
+    
     values = {}
 
     for key, value in json_data.items():

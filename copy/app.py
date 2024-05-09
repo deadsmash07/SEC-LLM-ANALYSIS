@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
-import subprocess
+from fetch_10k import download_10k_filings
 import os
-
+import subprocess
 app = Flask(__name__, static_url_path='', static_folder='frontend')
 
 @app.route('/')
@@ -17,26 +17,21 @@ def generate_insight():
     from_year = int(data['fromYear'])
     to_year = int(data['toYear'])
 
-    # Fetch the 10-K filings
     try:
-        command = f'python3 fetch_10k.py --company="{company}" --email="{email}" --ticker="{ticker}" --start_year={from_year} --end_year={to_year}'
-        print("running command: ", command)
-        subprocess.run(command, check=True, shell=True)
-        
-    except subprocess.CalledProcessError as e:
-        return jsonify({'error': 'Error fetching 10-K filings: ' + str(e)}), 500
-
-    # Perform text analysis and visualization
-    try:
+        # Fetch the 10-K filings
+        download_10k_filings(company, email, ticker, from_year, to_year)
+        # Perform text analysis and visualization
         command = f'python3 visualize.py --ticker="{ticker}" --start_year={from_year} --end_year={to_year}'
         print(command)
         subprocess.run(command, check=True, shell=True)
-        
     except Exception as e:
-        return jsonify({'error': 'Error generating insight: ' + str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
-    # Return the path to the generated visualization
-    return jsonify({'success': 'Visualization generated successfully'}), 200
+    # Return success with the path to generated visualization and latest insights
+    return jsonify({
+        'success': 'Visualization generated successfully'
+       
+    }), 200
 
 @app.route('/visualizations/<path:path>')
 def serve_visualizations(path):
@@ -46,35 +41,20 @@ def serve_visualizations(path):
 def get_plots():
     ticker = request.args.get('ticker')
     visualization_path = f'visualizations/{ticker}/insights'
-    
     if not os.path.exists(visualization_path):
         return jsonify([]), 404
-    
-    plot_files = []
-    for file_name in os.listdir(visualization_path):
-        if file_name.endswith('.png'):
-            plot_files.append({
-                'title': file_name[:-4],  # Remove the '.png' extension
-                'path': f'visualizations/{ticker}/insights/{file_name}'  # Update the path to include the ticker and file name
-            })
-    
+
+    plot_files = [{'title': f[:-4], 'path': f'visualizations/{ticker}/insights/{f}'} for f in os.listdir(visualization_path) if f.endswith('.png')]
     return jsonify(plot_files)
 
 @app.route('/get-detailed-plots', methods=['GET'])
 def get_detailed_plots():
     ticker = request.args.get('ticker')
     visualization_path = f'visualizations/{ticker}/detailed'
-    
     if not os.path.exists(visualization_path):
         return jsonify([]), 404
     
-    plot_files = []
-    for file_name in sorted(os.listdir(visualization_path)):
-        if file_name.endswith('.png'):
-            plot_files.append({
-                'title': file_name[:-4],  # Remove the '.png' extension
-                'path': f'visualizations/{ticker}/detailed/{file_name}'
-            })
+    plot_files = [{'title': f[:-4], 'path': f'visualizations/{ticker}/detailed/{f}'} for f in sorted(os.listdir(visualization_path)) if f.endswith('.png')]
     print(jsonify(plot_files))
     return jsonify(plot_files)
 

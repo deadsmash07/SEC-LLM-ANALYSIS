@@ -1,0 +1,14 @@
+{
+    "Revenue": {
+        "Product": "$274.515 billion",
+        "Service": "$53.768 billion"
+    },
+    "Net Income": {
+        "Product": "$66.231 billion",
+        "Service": "$15.261 billion"
+    },
+    "Effective Tax Rate": "14.4%",
+    "Deferred Tax Assets": "$5.9 billion",
+    "Deferred Tax Liabilities": "$6.76 billion",
+    "Foreign Income Percentage": "62%"
+}
