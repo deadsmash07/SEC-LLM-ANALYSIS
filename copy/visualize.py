@@ -104,14 +104,6 @@ def extract_values_for_segments_charts(json_data):
 def create_segment_bar_plots(ticker, insights):
     """
     Create bar plots for Revenue and Net Income segments for each year.
-
-    Args:
-        - ticker: The company's stock ticker symbol
-        - insights: A dictionary containing the insights for each year
-
-    Returns:
-        - None
-        - Saves the bar plots in the "visualizations/{ticker}/detailed" directory
     """
     directory = f'visualizations/{ticker}/detailed'
     shutil.rmtree(directory, ignore_errors=True)
