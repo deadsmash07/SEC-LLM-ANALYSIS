@@ -1,2 +1,5 @@
 * linguist-vendored
-*.python linguist-vendored=false
+*.python3 linguist-vendored=false
+*.html linguist-vendored=false
+
+
